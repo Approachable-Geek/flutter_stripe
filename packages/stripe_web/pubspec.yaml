@@ -14,7 +14,11 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   freezed_annotation: ^2.0.3
-  stripe_platform_interface: ^3.0.1
+  stripe_platform_interface:
+    git: 
+      url: 'https://github.com/Approachable-Geek/flutter_stripe.git'
+      ref: flutter_add_to_apple_wallet
+      path: packages/stripe_platform_interface
   js: ^0.6.3
 
 
