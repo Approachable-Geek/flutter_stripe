@@ -492,6 +492,20 @@ class Stripe {
     );
   }
 
+  /// Detect if the device has the ability to add to Wallet
+  Future<bool> canAddToWallet(
+    String primaryAccountIdentifier,
+  ) async {
+    try {
+      final canAddToWallet = await _platform.canAddToWallet(
+        primaryAccountIdentifier,
+      );
+      return canAddToWallet.canAddToWallet;
+    } on StripeError {
+      rethrow;
+    }
+  }
+
   ValueNotifier<bool>? _isApplePaySupported;
 
   // Internal use only

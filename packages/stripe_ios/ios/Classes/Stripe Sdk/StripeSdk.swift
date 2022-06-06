@@ -991,6 +991,25 @@ class StripeSdk: RCTEventEmitter, STPApplePayContextDelegate, STPBankSelectionVi
         }()
         resolve(["isInWallet": existingPass != nil])
     }
+
+    @objc(canAddToWallet:resolver:rejecter:)
+    func canAddToWallet(
+        primaryAccountIdentifier: NSString,
+        resolver resolve: @escaping RCTPromiseResolveBlock,
+        rejecter reject: @escaping RCTPromiseRejectBlock
+    ) -> Void {
+        var canAdd = false
+        if #available(iOS 13.4, *) {
+            if PKPassLibrary().canAddSecureElementPass(primaryAccountIdentifier: primaryAccountIdentifier as String) {
+                canAdd = true
+            } else {
+                canAdd = false
+            }
+        } else {
+            canAdd = false
+        }
+        resolve(["canAddToWallet": canAdd])
+    }
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         confirmPaymentResolver?(Errors.createError(ErrorType.Canceled, "FPX Payment has been canceled"))

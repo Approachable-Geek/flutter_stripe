@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:stripe_platform_interface/src/models/can_add_to_wallet.dart';
 import 'package:stripe_platform_interface/stripe_platform_interface.dart';
 
 import 'method_channel_stripe.dart';
@@ -91,6 +92,10 @@ abstract class StripePlatform extends PlatformInterface {
     required String clientSecret,
     required VerifyMicroDepositsParams params,
   });
+
+  Future<CanAddToWallet> canAddToWallet(
+    String primaryAccountIdentifier,
+  );
 
   /// Updates the internal card details. This method will not validate the card
   /// information so you should validate the information yourself.

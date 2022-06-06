@@ -38,6 +38,10 @@ class StripePlugin: StripeSdk, FlutterPlugin, ViewManagerDelegate {
         // Apple Pay Button
         let applePayFactory = ApplePayButtonViewFactory(messenger: registrar.messenger())
         registrar.register(applePayFactory, withId: "flutter.stripe/apple_pay")
+
+        // Add to Apple Wallet Button
+        let addToWalletFactory = AddToWalletButtonFactory(messenger: registrar.messenger(), delegate: instance)
+        registrar.register(addToWalletFactory, withId: "flutter.stripe/add_to_wallet")
         
     
     }
@@ -97,6 +101,8 @@ class StripePlugin: StripeSdk, FlutterPlugin, ViewManagerDelegate {
             return collectBankAccount(call, result: result)
         case "isCardInWallet":
             return isCardInWallet(call, result: result)
+        case "canAddToWallet":
+            return canAddToWallet(call, result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -275,6 +281,19 @@ extension  StripePlugin {
         }
         isCardInWallet(
             params: params,
+            resolver: resolver(for: result),
+            rejecter: rejecter(for: result)
+        )
+    }
+
+    func canAddToWallet(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let arguments = call.arguments as? FlutterMap,
+        let primaryAccountIdentifier = arguments["primaryAccountIdentifier"] as? NSString else {
+            result(FlutterError.invalidParams)
+            return
+        }
+        canAddToWallet(
+            primaryAccountIdentifier: primaryAccountIdentifier,
             resolver: resolver(for: result),
             rejecter: rejecter(for: result)
         )

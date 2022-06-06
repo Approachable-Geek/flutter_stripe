@@ -1,5 +1,5 @@
 //
-//  CardFormFactory.swift
+//  AddToWalletButtonFactory.swift
 //  stripe_ios
 //
 //  Created by Jaime Blasco on 9/8/21.
@@ -54,7 +54,7 @@ class AddToWalletButtonPlatformView : NSObject, FlutterPlatformView  {
      
         channel = FlutterMethodChannel(name: "flutter.stripe/add_to_wallet/\(viewId)",
                                            binaryMessenger: messenger)
-        addToWalletView = AddToWalletButtonView()
+        addToWalletView = AddToWalletButtonView(frame: frame)
         super.init()
         channel.setMethodCallHandler(handle)
        
