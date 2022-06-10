@@ -57,7 +57,7 @@ class AddToWalletButtonPlatformView : NSObject, FlutterPlatformView  {
         addToWalletView = AddToWalletButtonView(frame: frame)
         super.init()
         channel.setMethodCallHandler(handle)
-       
+
         addToWalletView.onCompleteAction = onCompleteAction
         updateProps(args)
     }
@@ -67,7 +67,18 @@ class AddToWalletButtonPlatformView : NSObject, FlutterPlatformView  {
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
+        switch call.method {
+        case "setEphemeralKey":
+            guard let arguments = call.arguments as? FlutterMap,
+            let ephemeralKey = arguments as? NSDictionary else {
+                result(FlutterError.invalidParams)
+                return
+            }
+            addToWalletView.ephemeralKey = ephemeralKey
+          result(nil)
+        default:
+            result(FlutterMethodNotImplemented)
+        }
     }
     
     func updateProps (_ args : Any? ) {
