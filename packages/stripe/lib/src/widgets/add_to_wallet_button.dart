@@ -5,11 +5,15 @@ import 'package:flutter/widgets.dart';
 class AddToAppleWallet extends StatefulWidget {
   final PlatformViewCreatedCallback onPlatformViewCreated;
   final Size size;
+  final Map<String, dynamic> cardDetails;
+  final bool testEnv;
 
   const AddToAppleWallet({
     Key? key,
     required this.onPlatformViewCreated,
     required this.size,
+    required this.cardDetails,
+    required this.testEnv,
   }) : super(key: key);
 
   @override
@@ -23,7 +27,10 @@ class AddToAppleWalletState extends State<AddToAppleWallet> {
   @override
   Widget build(BuildContext context) {
     // Pass parameters to the platform side.
-    final Map<String, dynamic> creationParams = <String, dynamic>{};
+    final Map<String, dynamic> creationParams = <String, dynamic>{
+      'testEnv': widget.testEnv,
+      'cardDetails': widget.cardDetails,
+    };
 
     return SizedBox(
       height: widget.size.height,
@@ -41,7 +48,16 @@ class AddToAppleWalletState extends State<AddToAppleWallet> {
 
 class AddToWallet extends StatefulWidget {
   final Size size;
-  const AddToWallet({Key? key, required this.size}) : super(key: key);
+  final Map<String, dynamic> cardDetails;
+  final Map<String, dynamic> ephemeralKey;
+  final bool testEnv;
+  const AddToWallet({
+    Key? key,
+    required this.size,
+    required this.cardDetails,
+    required this.ephemeralKey,
+    this.testEnv = false,
+  }) : super(key: key);
 
   @override
   _AddToWalletState createState() => _AddToWalletState();
@@ -50,22 +66,25 @@ class AddToWallet extends StatefulWidget {
 class _AddToWalletState extends State<AddToWallet> {
   MethodChannel? _methodChannel;
 
-  void onPlatformViewCreated(int viewId) {
-    debugPrint('onPlatformViewCreated');
-    debugPrint(viewId.toString());
+  void onPlatformViewCreated(int viewId) async {
     _methodChannel = MethodChannel('flutter.stripe/add_to_wallet/$viewId');
-    debugPrint(_methodChannel.toString());
+    if (_methodChannel != null) {
+      await _methodChannel!
+          .invokeMethod('setEphemeralKey', widget.ephemeralKey);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return Container(); // TODO: Google Pay
+        return const SizedBox(); // TODO: Google Pay
       case TargetPlatform.iOS:
         return AddToAppleWallet(
           onPlatformViewCreated: onPlatformViewCreated,
           size: widget.size,
+          cardDetails: widget.cardDetails,
+          testEnv: widget.testEnv,
         );
       default:
         throw UnsupportedError('Unsupported platform view');
